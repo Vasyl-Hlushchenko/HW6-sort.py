@@ -3,34 +3,32 @@ import os
 import shutil
 
 
-def get_main_path():
-    file_folder = ""
-    args = sys.argv
-    if len(args) == 1:
-        file_folder = input("Введіть шлях до папки: ")   
-    else:
-        file_folder = args[1]
-    while True:
-        if not os.path.exists(file_folder):
-            if file_folder:
-                print(f"{file_folder} не існує")
-            file_folder = input("Введіть шлях до папки: ")
-        else:
-            if os.path.isdir(file_folder):
-                break
-            else:
-                print(f"{file_folder} це не папка")
-                file_folder = ""
-    
-    
-    return file_folder
-
-
 video_folder = ["avi", "mp4", "mov", "mkv", "gif"]
 audio_folder = ["mp3", "ogg", "wav", "amr", "m4a", "wma"]
 images_folder = ["jpeg", "png", "jpg", "svg"]
 doc_folder = ["doc", "docx", "txt", "pdf", "xlsx", "pptx", "html", "scss", "css", "map"]
 arch_folder = ["zip", "gz", "tar", "rar"]
+
+
+def get_main_path():
+    main_path = ""
+    args = sys.argv
+    if len(args) == 1:
+        main_path = input("Введіть шлях до папки: ")   
+    else:
+        main_path = args[1]
+    while True:
+        if not os.path.exists(main_path):
+            if main_path:
+                print(f"{main_path} не існує")
+            main_path = input("Введіть шлях до папки: ")
+        else:
+            if os.path.isdir(main_path):
+                break
+            else:
+                print(f"{main_path} це не папка")
+                main_path = ""
+    return around_dir(main_path)
 
 
 def normalize(file):
@@ -50,33 +48,37 @@ def normalize(file):
             new_name += el
         else:
             new_name += "_"
-
-    
     return new_name + "." + lists[-1]
 
 
-def handling_file(file, file_path, main_path):
-    
+def make_dirs(main_path):
+    global video_path
     video_path = os.path.join(main_path, "video")
     if not os.path.exists(video_path):
         os.makedirs(video_path)
 
+    global audio_path
     audio_path = os.path.join(main_path, "audio")
     if not os.path.exists(audio_path):
         os.makedirs(audio_path)
 
+    global images_path
     images_path = os.path.join(main_path, "images")
     if not os.path.exists(images_path):
         os.makedirs(images_path)
 
+    global documents_path
     documents_path = os.path.join(main_path, "documents")
     if not os.path.exists(documents_path):
         os.makedirs(documents_path)
 
+    global archives_path
     archives_path = os.path.join(main_path, "archives")
     if not os.path.exists(archives_path):
         os.makedirs(archives_path)
 
+
+def handling_file(main_path, file, file_path):
     file_name_divide = normalize(file).split(".")
     file_ending = ""
     if len(file_name_divide) > 1:
@@ -117,10 +119,12 @@ def handling_file(file, file_path, main_path):
 
 def around_dir(main_path):
     files = os.listdir(main_path)
+    make_dirs(main_path)
     for file in files:
         file_path = os.path.join(main_path, file)
         if os.path.isfile(file_path):
-            handling_file(file, file_path, main_path)
+            # make_dirs(main_path)
+            handling_file(main_path, file, file_path)
         else:
             around_dir(file_path)
             if not os.listdir(file_path):
@@ -129,5 +133,4 @@ def around_dir(main_path):
 
 
 if __name__ == "__main__":
-    main_path = get_main_path()
-    around_dir(main_path)
+    get_main_path()
