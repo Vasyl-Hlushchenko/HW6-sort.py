@@ -3,14 +3,8 @@ import os
 import shutil
 
 
-video_folder = ["avi", "mp4", "mov", "mkv", "gif"]
-audio_folder = ["mp3", "ogg", "wav", "amr", "m4a", "wma"]
-images_folder = ["jpeg", "png", "jpg", "svg"]
-doc_folder = ["doc", "docx", "txt", "pdf", "xlsx", "pptx", "html", "scss", "css", "map"]
-arch_folder = ["zip", "gz", "tar", "rar"]
-
-
 def get_main_path():
+
     main_path = ""
     args = sys.argv
     if len(args) == 1:
@@ -28,10 +22,19 @@ def get_main_path():
             else:
                 print(f"{main_path} це не папка")
                 main_path = ""
+
     return around_dir(main_path)
 
 
+video_folder = ["avi", "mp4", "mov", "mkv", "gif"]
+audio_folder = ["mp3", "ogg", "wav", "amr", "m4a", "wma"]
+images_folder = ["jpeg", "png", "jpg", "svg"]
+doc_folder = ["doc", "docx", "txt", "pdf", "xlsx", "pptx", "html", "scss", "css", "map"]
+arch_folder = ["zip", "gz", "tar", "rar"]
+
+
 def normalize(file):
+
     map = {"а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e", "ж": "zh", "з": "z", "и": "i", "й": "y", 
     "к": "k", "л": "l", "м": "m", "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u", "ф": "f", "х": "h", 
     "ц": "ts", "ч": "ch", "ш": "sh", "щ": "sch", "ъ": "", "ы": "y", "ь": "", "э": "e", "ю": "yu", "я": "ya", "і": "i", "є": "e", "ї": "i", "А": "A", 
@@ -48,37 +51,37 @@ def normalize(file):
             new_name += el
         else:
             new_name += "_"
+
     return new_name + "." + lists[-1]
 
 
-def make_dirs(main_path):
-    global video_path
+def path_handler(file, file_path, main_path):
+
     video_path = os.path.join(main_path, "video")
     if not os.path.exists(video_path):
         os.makedirs(video_path)
 
-    global audio_path
     audio_path = os.path.join(main_path, "audio")
     if not os.path.exists(audio_path):
         os.makedirs(audio_path)
 
-    global images_path
     images_path = os.path.join(main_path, "images")
     if not os.path.exists(images_path):
         os.makedirs(images_path)
 
-    global documents_path
     documents_path = os.path.join(main_path, "documents")
     if not os.path.exists(documents_path):
         os.makedirs(documents_path)
 
-    global archives_path
     archives_path = os.path.join(main_path, "archives")
     if not os.path.exists(archives_path):
         os.makedirs(archives_path)
 
+    return file_handling(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path)
 
-def handling_file(main_path, file, file_path):
+
+def file_handling(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path):
+
     file_name_divide = normalize(file).split(".")
     file_ending = ""
     if len(file_name_divide) > 1:
@@ -89,15 +92,15 @@ def handling_file(main_path, file, file_path):
         if file_ending in video_folder:
             new_path = os.path.join(video_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(video_path, normalize(file)))
-    
+
         elif file_ending in audio_folder:
             new_path = os.path.join(audio_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(audio_path, normalize(file)))
-        
+
         elif file_ending in images_folder:
             new_path = os.path.join(images_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(images_path, normalize(file)))
-            
+
         elif file_ending in doc_folder:
             new_path = os.path.join(documents_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(documents_path, normalize(file)))
@@ -118,18 +121,18 @@ def handling_file(main_path, file, file_path):
 
 
 def around_dir(main_path):
+    
     files = os.listdir(main_path)
-    make_dirs(main_path)
     for file in files:
         file_path = os.path.join(main_path, file)
         if os.path.isfile(file_path):
-            # make_dirs(main_path)
-            handling_file(main_path, file, file_path)
+            path_handler(file, file_path, main_path)
         else:
             around_dir(file_path)
             if not os.listdir(file_path):
                 os.rmdir(file_path)
                 continue
+
 
 
 if __name__ == "__main__":
