@@ -77,10 +77,10 @@ def path_handler(file, file_path, main_path):
     if not os.path.exists(archives_path):
         os.makedirs(archives_path)
 
-    return file_handling(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path)
+    return file_handler(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path)
 
 
-def file_handling(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path):
+def file_handler(file, file_path, main_path, video_path, audio_path, images_path, documents_path, archives_path):
 
     file_name_divide = normalize(file).split(".")
     file_ending = ""
@@ -92,29 +92,23 @@ def file_handling(file, file_path, main_path, video_path, audio_path, images_pat
         if file_ending in video_folder:
             new_path = os.path.join(video_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(video_path, normalize(file)))
-
         elif file_ending in audio_folder:
             new_path = os.path.join(audio_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(audio_path, normalize(file)))
-
         elif file_ending in images_folder:
             new_path = os.path.join(images_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(images_path, normalize(file)))
-
         elif file_ending in doc_folder:
             new_path = os.path.join(documents_path, file)
             os.replace(shutil.move(file_path, new_path), os.path.join(documents_path, normalize(file)))
-
         elif file_ending in arch_folder:
             new_path = os.path.join(archives_path, file)
-
             try:
                 shutil.unpack_archive(shutil.move(file_path, new_path), os.path.join(archives_path, normalize(file).rstrip(file_ending)))
             except shutil.ReadError:
                 print(f"Незнайомий формат, архів {normalize(file)}, не може розпакуватись. Імпортуйте додаткову бібліотеку.")
             finally:
                 os.rename(os.path.join(archives_path, file), os.path.join(archives_path, normalize(file)), )
-
         else:
             os.replace(file_path, os.path.join(main_path, normalize(file)))
             return None
