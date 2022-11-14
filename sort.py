@@ -8,7 +8,8 @@ def chek_error(handler):
         try:
             handler(*args, **kwargs)
         except (shutil.ReadError):
-            print("Незнайомий формат. Aрхів, не може розпакуватись. Імпортуйте додаткову бібліотеку.")
+            print("Unfamiliar format. Archive, cannot be unpacked. Import an additional library.")
+            
     return wrapper
 
 
@@ -16,19 +17,19 @@ def get_main_path():
     main_path = ""
     args = sys.argv
     if len(args) == 1:
-        main_path = input("Введіть шлях до папки: ")   
+        main_path = input("Enter path to your folder: ")   
     else:
         main_path = args[1]
     while True:
         if not os.path.exists(main_path):
             if main_path:
-                print(f"{main_path} не існує")
-            main_path = input("Введіть шлях до папки: ")
+                print(f"{main_path} not exist")
+            main_path = input("Enter path to your folder: ")
         else:
             if os.path.isdir(main_path):
                 break
             else:
-                print(f"{main_path} це не папка")
+                print(f"{main_path} this is not a folder")
                 main_path = ""
 
     return path_handler(main_path)
